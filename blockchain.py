@@ -52,11 +52,3 @@ if __name__ == "__main__":
     previous_hash = block_chain.hash(block_chain.chain[-1])
     block_chain.create_block(2, previous_hash)
     pprint(block_chain.chain)
-
-    previous_hash = block_chain.hash(block_chain.chain[-1])
-    block_chain.create_block(3, previous_hash)
-    pprint(block_chain.chain)
-
-    previous_hash = block_chain.hash(block_chain.chain[-1])
-    block_chain.create_block(1, previous_hash)
-    pprint(block_chain.chain)
