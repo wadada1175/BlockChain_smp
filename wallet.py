@@ -5,6 +5,8 @@ import hashlib
 import base58
 from ecdsa import NIST256p, SigningKey
 
+import utils
+
 
 class wallet(object):
     def __init__(self):
@@ -57,8 +59,66 @@ class wallet(object):
         return blockchain_address
 
 
+class Transaction(object):
+    def __init__(
+        self,
+        sender_private_key,
+        sender_public_key,
+        sender_blockchain_address,
+        recipient_blockchain_address,
+        value,
+    ):
+        self.sender_private_key = sender_private_key
+        self.sender_public_key = sender_public_key
+        self.sender_blockchain_address = sender_blockchain_address
+        self.recipient_blockchain_address = recipient_blockchain_address
+        self.value = value
+
+    def generate_signature(self):
+        sha256 = hashlib.sha256()
+        transaction = utils.sorted_dict_by_key(
+            {
+                "sender_blockchain_address": self.sender_blockchain_address,
+                "recipient_blockchain_address": self.recipient_blockchain_address,
+                "value": float(self.value),
+            }
+        )
+        sha256.update(str(transaction).encode("utf-8"))
+        message = sha256.digest()
+        private_key = SigningKey.from_string(
+            bytes().fromhex(self.sender_private_key), curve=NIST256p
+        )
+        private_key_sign = private_key.sign(message)
+        signature = private_key_sign.hex()
+        return signature
+
+
 if __name__ == "__main__":
-    wallet = wallet()
-    print(wallet.private_key)
-    print(wallet.public_key)
-    print(wallet.blockchain_address)
+    wallet_M = wallet()
+    wallet_A = wallet()
+    wallet_B = wallet()
+    t = Transaction(
+        wallet_A.private_key,
+        wallet_A.public_key,
+        wallet_A.blockchain_address,
+        wallet_B.blockchain_address,
+        1.0,
+    )
+
+    ##### BlockChain Node #####
+    import blockchain
+
+    block_chain = blockchain.BlockChain(blockchain_address=wallet_M.blockchain_address)
+    is_added = block_chain.add_transaction(
+        wallet_A.blockchain_address,
+        wallet_B.blockchain_address,
+        1.0,
+        wallet_A.public_key,
+        t.generate_signature(),
+    )
+    print("Added?", is_added)
+    block_chain.mining()
+    utils.pprint(block_chain.chain)
+
+    print("A", block_chain.calculate_total_amount(wallet_A.blockchain_address))
+    print("B", block_chain.calculate_total_amount(wallet_B.blockchain_address))
