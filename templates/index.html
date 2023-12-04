@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div id="coin_wallet">coin wallet</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <button id="login_button">Login</button>
+    </header>
+    <div>
+        <h1>Wallet</h1>
+        <div id="wallet amount">0</div>
+        <button id="reload_wallet" style="color: yellow; background-color: black;">Reload Wallet</button>
+
+        <p>Public Key</p>
+        <textarea id="public_key" rows="2" cols="100"></textarea>
+
+        <p>Private Key</p>
+        <textarea id="private_key" rows="1" cols="100"></textarea>
+
+        <p>Blockchain Address</p>
+        <textarea id="Blockchain Address" rows="1" cols="100"></textarea>
+    </div>
+
+    <div>
+        <h1>Send Money</h1>
+        <div>
+            address: <input type="text" id="address" name="address"><br>
+            Amount: <input type="text" id="amount" name="amount"><br>
+            <button id="Send Money" style="color: yellow; background-color: black;">Send Money</button>
+        </div>
+    </div>
+</body>
+</html>
