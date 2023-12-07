@@ -2,45 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wallet</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+         $(function () {
+             $.ajax({
+                 url: '/wallet',
+                 type: 'POST',
+                 success: function (response) {
+                     $('#public_key').val(response['public_key']);
+                     $('#private_key').val(response['private_key']);
+                     $('#blockchain_address').val(response['blockchain_address']);
+                     console.info(response);
+                 },
+                 error: function (error) {
+                     console.error(error);
+                 }
+             })
+
+             $('#send_money_button').click(function () {
+                let confirm_text = 'Are you sure to send?';
+                let confirm_result = confirm(confirm_text);
+                if (confirm_result !== true) {
+                    alert('Canceled');
+                    return
+                }
+
+                let transaction_data = {
+                    'sender_private_key': $('#private_key').val(),
+                    'sender_blockchain_address': $('#blockchain_address').val(),
+                    'recipient_blockchain_address': $('#recipient_blockchain_address').val(),
+                    'sender_public_key': $('#public_key').val(),
+                    'value': $('#send_amount').val(),
+                };
+
+                $.ajax({
+                    url: '/transaction',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(transaction_data),
+                    success: function (response) {
+                        alert('Send success')
+                    },
+                    error: function (response) {
+                        alert('Send failed', error)
+                    }
+                })
+
+             })
+
+
+
+         })
+    </script>
 </head>
 <body>
-    <header>
-        <div id="coin_wallet">coin wallet</div>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <button id="login_button">Login</button>
-    </header>
     <div>
         <h1>Wallet</h1>
-        <div id="wallet amount">0</div>
-        <button id="reload_wallet" style="color: yellow; background-color: black;">Reload Wallet</button>
+        <div id="wallet_amount">0</div>
+        <button id="reload_wallet">Reload Wallet</button>
 
         <p>Public Key</p>
         <textarea id="public_key" rows="2" cols="100"></textarea>
-
         <p>Private Key</p>
         <textarea id="private_key" rows="1" cols="100"></textarea>
-
         <p>Blockchain Address</p>
-        <textarea id="Blockchain Address" rows="1" cols="100"></textarea>
+        <textarea id="blockchain_address" rows="1" cols="100"></textarea>
     </div>
 
     <div>
         <h1>Send Money</h1>
         <div>
-            address: <input type="text" id="address" name="address"><br>
-            Amount: <input type="text" id="amount" name="amount"><br>
-            <button id="Send Money" style="color: yellow; background-color: black;">Send Money</button>
+            Address: <input id="recipient_blockchain_address" size="100"
+                            type="text"><br>
+            Amount: <input id="send_amount" type="text"><br>
+            <button id="send_money_button">Send</button>
         </div>
     </div>
+
+
 </body>
 </html>
