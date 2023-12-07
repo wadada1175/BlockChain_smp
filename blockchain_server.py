@@ -65,12 +65,27 @@ def transaction():
         return jsonify({"message": "success"}), 201
 
 
+@app.route("/mine", methods=["GET"])
+def mine():
+    block_chain = get_blockchain()
+    is_mined = block_chain.mining()
+    if is_mined:
+        return jsonify({"message": "success"}), 200
+    return jsonify({"message": "fail"}), 400
+
+
+@app.route("/mine/start", methods=["GET"])
+def start_mine():
+    get_blockchain().start_mining()
+    return jsonify({"message": "success"}), 200
+
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
     parser.add_argument(
-        "-p", "--port", default=6000, type=int, help="port to listen on"
+        "-p", "--port", default=5000, type=int, help="port to listen on"
     )
     args = parser.parse_args()
     port = args.port
